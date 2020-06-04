@@ -235,7 +235,7 @@
             (add-extra-syntax r-operators 'ess-r-mode 'inferior-ess-r-mode)
             (add-extra-syntax python-operators 'python-mode)))
 (use-package poly-lisp-html
-  :load-path "~/.emacs.d/charles/")
+  :load-path "~/quicklisp/dists/quicklisp/software/markup-20191130-git/")
 (use-package polymode
   :after (poly-lisp-html)
   :mode ("\\.htmlisp$" . poly-lisp-html-mode)
