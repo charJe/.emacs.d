@@ -104,7 +104,8 @@
          ("C-x s" . save-all)
          ("C-c +" . increment-number-at-point)
          ("<M-up>" . move-line-up)
-         ("<M-down>" . move-line-down)))
+         ("<M-down>" . move-line-down)
+         ("C-x C-n" . insert-file-name)))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes

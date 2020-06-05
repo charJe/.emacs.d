@@ -28,6 +28,12 @@
   (forward-line -1)
   (end-of-line nil))
 
+(defun insert-file-name ()
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (insert (file-name-base filename)))))
+
 (defun save-all ()
   "Save all buffers."
   (interactive)
