@@ -215,6 +215,8 @@
   :bind (("C-x v g" . magit)))
 (use-package eglot
   :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode) . eglot-ensure))
+  :bind (:map eglot-mode-map
+              ("<S-f6>" . eglot-rename))
   :config
   (progn
     (setenv "CLASSPATH"
