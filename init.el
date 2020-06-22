@@ -57,7 +57,7 @@
 ;;    C-M-x      Eval last lisp s-exp
 ;;    C-j        Eval last lisp s-exp and display output
 ;;    C-M-t      Transpose s-exp
-;;    Press F1 or C-h for further help.
+;;    Press F1 or C-? for further help.
 
 ")
  '(menu-bar-mode nil)
@@ -175,12 +175,17 @@
                   '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))
           '(html-mode mhtml-mode)))
 (use-package apropos
-  :bind (("C-h a" . apropos)))
+  :bind (("<help> a" . apropos)))
 (use-package simple
   :hook ((prog-mode . (lambda () (toggle-truncate-lines 1)))
          (text-mode . visual-line-mode))
   :bind (("M-k" . kill-whole-line)
-         ("M-'" . quoted-insert)))
+         ("M-'" . quoted-insert)
+         ("C-M-h" . backward-kill-word))
+  :config
+  (progn
+    (define-key key-translation-map (kbd "C-?") (kbd "<help>"))
+    (define-key key-translation-map (kbd "C-h") (kbd "DEL"))))
 (use-package subword
   :hook ((java-mode . subword-mode)
          (dart-mode . subword-mode)
