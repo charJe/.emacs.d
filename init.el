@@ -262,7 +262,7 @@
   :hook ((poly-lisp-html-mode . rainbow-delimiters-mode-disable))) ;I'm sorry, but rainbow-delimiters doesn't work with this
 (progn ;init
   (find-file "~/.emacs.d/init.el")
-  (put 'upcase-region 'disabled nil)
+  (mapcar (lambda (fun) (put fun 'disabled nil)) '(upcase-region down-case-region))
   (let ((x (+ 14 (car (frame-position))))
         (y (+ 14 (cdr (frame-position))))
         (width (* 130 (frame-char-width)))
