@@ -257,9 +257,7 @@
   :load-path "~/quicklisp/dists/quicklisp/software/markup-20191130-git/")
 (use-package polymode
   :after (poly-lisp-html)
-  :mode ("\\.htmlisp$" . poly-lisp-html-mode)
-  ;; you obviously don't need this if you don't have rainbow-delimiters
-  :hook ((poly-lisp-html-mode . rainbow-delimiters-mode-disable))) ;I'm sorry, but rainbow-delimiters doesn't work with this
+  :mode ("\\.htmlisp$" . poly-lisp-html-mode))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (mapcar (lambda (fun) (put fun 'disabled nil)) '(upcase-region down-case-region))
