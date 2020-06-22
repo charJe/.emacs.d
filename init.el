@@ -143,6 +143,7 @@
   :bind (("ESC <f5>" . compile)
          ("<f5>"     . recompile)))
 (use-package sgml-mode ;html
+  :after (prog-mode)
   :preface
   (progn
     (defun html-/-close-tag ()
@@ -167,9 +168,9 @@
               ("C-M-f" . sgml-skip-tag-forward)
               ("C-M-b" . sgml-skip-tag-backward))
   :hook ((html-mode . flyspell-mode-off)
-         (html-mode . (lambda () (run-hooks 'prog-mode-hook)))
          (html-mode . sgml-electric-tag-pair-mode))
   :config
+  ;; (setq html-mode-hook (append html-mode-hook prog-mode-hook))
   (mapcar (lambda (mode)
             (setf (alist-get mode hs-special-modes-alist)
                   '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))
@@ -178,7 +179,8 @@
   :bind (("<help> a" . apropos)))
 (use-package simple
   :hook ((prog-mode . (lambda () (toggle-truncate-lines 1)))
-         (text-mode . visual-line-mode))
+         ;; (text-mode . (lambda () (visual-line-mode 1)))
+         )
   :bind (("M-k" . kill-whole-line)
          ("M-'" . quoted-insert)
          ("C-M-h" . backward-kill-word))
