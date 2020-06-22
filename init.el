@@ -123,6 +123,11 @@
          ("C-x _" . split-window-below)))
 (use-package windresize
   :bind (("s-w" . windresize)))
+(use-package windmove
+  :bind (("C-s-f" . windmove-right) ("<C-s-right>" . windmove-right)
+         ("C-s-n" . windmove-down) ("<C-s-down>" . windmove-down)
+         ("C-s-b" . windmove-left) ("<C-s-left>" . windmove-left)
+         ("C-s-p" . windmove-up) ("<C-s-up>" . windmove-up)))
 (use-package expand-region
   :bind (("C-=" . er/expand-region)))
 (use-package treemacs
