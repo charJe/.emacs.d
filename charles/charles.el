@@ -30,7 +30,10 @@
 
 (defun insert-file-name ()
   (interactive)
-  (let ((filename (buffer-file-name)))
+  (let ((filename (cl-loop for buffer in (buffer-list)
+                           do (let ((filename (buffer-file-name buffer)))
+                                (when filename
+                                  (cl-return filename))))))
     (when filename
       (insert (file-name-base filename)))))
 
