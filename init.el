@@ -220,7 +220,8 @@
          ("C-x C-S-r" . flutter-state-reload)))
 (use-package flyspell
   :hook ((text-mode . flyspell-mode))
-  :bind ([mouse-3] . flyspell-correct-word))
+  :bind (:map flyspell-mode-map
+              ([mouse-3] . flyspell-correct-word)))
 (use-package org
   :hook ((org-mode . org-indent-mode)
          (org-mode . org-toggle-pretty-entities)))
