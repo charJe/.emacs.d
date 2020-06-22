@@ -202,7 +202,11 @@
   :bind (:map company-mode-map ("M-/" . company-complete)))
 (use-package hideshow
   :hook ((prog-mode . hs-minor-mode))
-  :bind (("<C-tab>" . hs-toggle-hiding)))
+  :bind (:map hs-minor-mode-map
+              ("<C-tab>" . hs-toggle-hiding)
+              ("C-c h a" . hs-hide-all)
+              ("C-c h s" . hs-show-all)
+              ("C-c h l" . hs-hide-level)))
 (use-package misc
   :bind (("M-z" . zap-up-to-char)))
 (use-package new-comment
