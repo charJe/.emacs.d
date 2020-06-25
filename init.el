@@ -74,13 +74,16 @@
  '(tab-width 4)
  '(tool-bar-mode nil)
  '(tool-bar-style (quote image))
+ '(tooltip-mode nil)
  '(treemacs-collapse-dirs 3)
  '(treemacs-display-in-side-window nil)
  '(treemacs-filewatch-mode t)
  '(treemacs-follow-mode t)
  '(treemacs-fringe-indicator-mode t)
  '(wdired-allow-to-change-permissions t)
- '(web-mode-markup-indent-offset 2))
+ '(hs-hide-comments-when-hiding-all nil)
+ '(hs-allow-nesting t)
+ '(hs-isearch-open t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -198,6 +201,7 @@
   :hook ((prog-mode . yas-minor-mode)
          (org-mode . yas-minor-mode)))
 (use-package company
+  :diminish "co"
   :hook (((prog-mode sly-mrepl-mode) . company-mode))
   :bind (:map company-mode-map ("M-/" . company-complete)))
 (use-package hideshow
@@ -259,6 +263,12 @@
 (use-package polymode
   :after (poly-lisp-html)
   :mode ("\\.htmlisp$" . poly-lisp-html-mode))
+(use-package ivy
+  :diminish ""
+  :config (ivy-mode))
+(use-package autorevert
+  :diminish ""
+  :config (global-auto-revert-mode))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (mapcar (lambda (fun) (put fun 'disabled nil)) '(upcase-region down-case-region))
