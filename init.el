@@ -4,8 +4,7 @@
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
   (package-initialize)
-  (eval-when-compile
-    (require 'use-package)))
+  (require 'use-package))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -117,7 +116,7 @@
             (q-th wom 'wombat)
             (sd)))
 (use-package window
-  :functions (other-window)
+  :functions other-window
   :bind (("C-o" . (lambda () (interactive) (other-window 1)))
          ("M-o" . (lambda () (interactive) (other-window -1)))
          ("C-q" . delete-window)
@@ -147,6 +146,7 @@
          ("<f5>"     . recompile)))
 (use-package sgml-mode ;html
   :after (prog-mode)
+  :functions sgml-close-tag
   :preface
   (progn
     (defun html-/-close-tag ()
@@ -174,10 +174,9 @@
          (html-mode . sgml-electric-tag-pair-mode))
   :config
   ;; (setq html-mode-hook (append html-mode-hook prog-mode-hook))
-  (mapcar (lambda (mode)
-            (setf (alist-get mode hs-special-modes-alist)
-                  '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))
-          '(html-mode mhtml-mode)))
+  (dolist (mode '(html-mode mhtml-mode))
+    (setf (alist-get mode hs-special-modes-alist)
+          '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil))))
 (use-package apropos
   :bind (("<help> a" . apropos)))
 (use-package simple
@@ -271,7 +270,7 @@
   :config (global-auto-revert-mode))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
-  (mapcar (lambda (fun) (put fun 'disabled nil)) '(upcase-region down-case-region))
+  (dolist (fun '(upcase-region down-case-region)) (put fun 'disabled nil))
   (let ((x (+ 14 (car (frame-position))))
         (y (+ 14 (cdr (frame-position))))
         (width (* 130 (frame-char-width)))
