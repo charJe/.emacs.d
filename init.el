@@ -31,13 +31,17 @@
  '(frame-background-mode (quote light))
  '(frame-title-format "Emacs" t)
  '(gud-pdb-command-name "python -m pdb")
+ '(hs-allow-nesting t t)
+ '(hs-hide-comments-when-hiding-all nil)
+ '(hs-isearch-open t)
+ '(ido-mode (quote both) nil (ido))
  '(indent-tabs-mode nil)
  '(inferior-lisp-program "sbcl")
  '(inhibit-startup-screen t)
  '(initial-scratch-message
    "
 ;;    C-x        Hold Ctrl and press x
-;;    M-x        Hold Alt and press x
+;;    M-x        Hold Meta (Alt) and press x
 ;;    C-x y      Hold Ctrl and press x then press just y
 
 ;;    C-Space    Select text
@@ -48,9 +52,9 @@
 
 ;;    C-x C-f    Open file
 ;;    C-x |      Split window vertically
-;;    C-x _      Split widnow horizontally
-;;    C-x b      Switch buffer displayed in
-;;    C-q        Minimize window
+;;    C-x _      Split window horizontally
+;;    C-x b        Switch buffer in current window
+;;    C-q        Move window into background
 ;;    C-o        Cycle focus between windows
 
 ;;    C-M-x      Eval last lisp s-exp
@@ -79,10 +83,7 @@
  '(treemacs-filewatch-mode t)
  '(treemacs-follow-mode t)
  '(treemacs-fringe-indicator-mode t)
- '(wdired-allow-to-change-permissions t)
- '(hs-hide-comments-when-hiding-all nil)
- '(hs-allow-nesting t)
- '(hs-isearch-open t))
+ '(wdired-allow-to-change-permissions t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -114,13 +115,17 @@
             (q-th sl 'sanityinc-solarized-light)
             (q-th sd 'sanityinc-solarized-dark)
             (q-th wom 'wombat)
-            (sd)))
+            (sl)))
+(use-package tool-bar-mode
+  :bind ("<f9>" . tool-bar-mode))
 (use-package window
   :functions other-window
   :bind (("C-o" . (lambda () (interactive) (other-window 1)))
          ("M-o" . (lambda () (interactive) (other-window -1)))
          ("C-q" . delete-window)
+         ("s-q" . delete-window)
          ("M-q" . (lambda () (interactive) (kill-buffer (current-buffer))))
+         ("s-b" . switch-to-buffer)
          ("C-x |" . split-window-right)
          ("C-x _" . split-window-below)))
 (use-package windresize
@@ -212,7 +217,7 @@
               ("C-c h l" . hs-hide-level)))
 (use-package misc
   :bind (("M-z" . zap-up-to-char)))
-(use-package new-comment
+(use-package newcomment
   :bind (("C-;" . comment-line)))
 (use-package cc-mode
   :hook ((c-mode . (lambda () (c-set-style "cc-mode")))
@@ -228,6 +233,10 @@
 (use-package org
   :hook ((org-mode . org-indent-mode)
          (org-mode . org-toggle-pretty-entities)))
+(use-package elisp-mode
+  :bind (:map emacs-lisp-mode-map
+              ("ESC <f5>" . emacs-lisp-byte-compile-and-load)
+              ("<f5>"     . eval-buffer)))
 (use-package rainbow-delimiters
   :hook ((lisp-mode emacs-lisp-mode) . rainbow-delimiters-mode))
 (use-package togetherly)
@@ -262,9 +271,6 @@
 (use-package polymode
   :after (poly-lisp-html)
   :mode ("\\.htmlisp$" . poly-lisp-html-mode))
-(use-package ivy
-  :diminish ""
-  :config (ivy-mode))
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
