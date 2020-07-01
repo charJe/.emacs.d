@@ -72,7 +72,8 @@
  '(org-startup-with-inline-images t)
  '(package-selected-packages
    (quote
-    (polymode yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode pcre2el multiple-cursors mips-mode magit kotlin-mode htmlize go-mode gnuplot-mode expand-region ess es-windows es-lib elixir-mode eglot dart-mode company color-theme-sanityinc-solarized bnf-mode bison-mode bfbuilder auctex)))
+    (diminish ivy cider clojure-mode polymode yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode pcre2el multiple-cursors mips-mode magit kotlin-mode htmlize go-mode gnuplot-mode expand-region ess es-windows es-lib elixir-mode eglot dart-mode company color-theme-sanityinc-solarized bnf-mode bison-mode bfbuilder auctex)))
+ '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tab-width 4)
  '(tool-bar-mode nil)
@@ -244,18 +245,19 @@
               ("ESC <f5>" . emacs-lisp-byte-compile-and-load)
               ("<f5>"     . eval-buffer)))
 (use-package rainbow-delimiters
-  :hook ((lisp-mode emacs-lisp-mode) . rainbow-delimiters-mode))
+  :hook ((lisp-mode emacs-lisp-mode clojure-mode) . rainbow-delimiters-mode))
 (use-package togetherly)
 (use-package magit
   :bind (("C-x v g" . magit)))
 (use-package eglot
-  :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode) . eglot-ensure))
+  :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode) . eglot-ensure))
   :bind (:map eglot-mode-map
               ("<S-f6>" . eglot-rename))
   :config
   (progn
     (setenv "CLASSPATH"
             (concat (getenv "CLASSPATH") ":/home/charles/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar"))
+    (add-to-list 'eglot-server-programs '(clojure-mode . ("bash" "-c" "clojure-lsp")))
     (add-to-list 'eglot-server-programs '(html-mode . ("html-languageserver" "--stdio")))
     (add-to-list 'eglot-server-programs '(css-mode . ("css-languageserver" "--stdio")))
     (add-to-list 'eglot-server-programs '(typescript-mode . ("javascript-typescript-stdio")))
@@ -291,6 +293,6 @@
                         (abs (- x (/ (- width (frame-pixel-width)) 2) 32))
                         (abs (- y (- height (frame-pixel-height)))))
     (set-frame-size (selected-frame) width height :pixelwise))
-  (set-frame-font "Consolas 14")
+  (set-frame-font "Borg Sans Mono 14")
   (setq-default line-spacing .2)
   (switch-to-buffer "*scratch*"))
