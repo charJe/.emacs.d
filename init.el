@@ -76,6 +76,7 @@
  '(show-paren-mode t)
  '(tab-width 4)
  '(tool-bar-mode nil)
+ '(tool-bar-position (quote left))
  '(tool-bar-style (quote image))
  '(tooltip-mode nil)
  '(treemacs-collapse-dirs 3)
@@ -104,11 +105,16 @@
   :hook ((prog-mode . add-prog-pretty-symbols)
          (prog-mode . prettify-symbols-mode))
   :bind (("C-M-y" . insert-lambda)
+         ("H-y" . insert-lambda)
          ("C-x s" . save-all)
-         ("C-c +" . increment-number-at-point)
+         ("C-c =" . increment-number-at-point)
+         ("C-c -" . (lambda (arg) (interactive "p*") (increment-number-at-point (- arg))))
+         ("H-=" . increment-number-at-point)
+         ("H--" . (lambda (arg) (interactive "p*") (increment-number-at-point (- arg))))
          ("<M-up>" . move-line-up)
          ("<M-down>" . move-line-down)
-         ("C-x C-n" . insert-file-name)))
+         ("C-c C-f" . insert-file-name)
+         ("H-f" . insert-file-name)))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes
