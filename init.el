@@ -39,7 +39,7 @@
  '(icomplete-mode t)
  '(icomplete-separator "
 ")
- '(icomplete-show-matches-on-no-input t)
+ '(icomplete-show-matches-on-no-input nil)
  '(ido-mode (quote both) nil (ido))
  '(ido-separator "
 ")
@@ -104,6 +104,7 @@
  '(company-scrollbar-fg ((t (:background "gray50"))))
  '(company-tooltip ((t (:background "dim gray" :foreground "dark gray"))))
  '(company-tooltip-selection ((t (:background "gray44" :foreground "white smoke"))))
+ '(diff-context ((t (:inherit default))))
  '(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
  '(sly-error-face ((t (:inherit flymake-error))))
  '(sly-note-face ((t (:inherit flymake-note))))
@@ -294,7 +295,7 @@
   :bind (:map icomplete-minibuffer-map
               ("C-n" . icomplete-forward-completions)
               ("C-p" . icomplete-backward-completions)
-              ("RET" . icomplete-force-complete-and-exit)))
+              ("<return>" . icomplete-force-complete-and-exit)))
 (use-package ido
   :bind (:map ido-common-completion-map
               ("C-n" . ido-next-match)
