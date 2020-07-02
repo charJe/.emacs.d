@@ -34,10 +34,15 @@
  '(hs-allow-nesting t t)
  '(hs-hide-comments-when-hiding-all nil)
  '(hs-isearch-open t)
- '(ido-mode (quote both) nil (ido))
  '(icomplete-compute-delay 0)
  '(icomplete-hide-common-prefix nil)
  '(icomplete-mode t)
+ '(icomplete-separator "
+")
+ '(icomplete-show-matches-on-no-input t)
+ '(ido-mode (quote both) nil (ido))
+ '(ido-separator "
+")
  '(indent-tabs-mode nil)
  '(inferior-lisp-program "sbcl")
  '(inhibit-startup-screen t)
@@ -285,6 +290,15 @@
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
+(use-package icomplete
+  :bind (:map icomplete-minibuffer-map
+              ("C-n" . icomplete-forward-completions)
+              ("C-p" . icomplete-backward-completions)
+              ("RET" . icomplete-force-complete-and-exit)))
+(use-package ido
+  :bind (:map ido-common-completion-map
+              ("C-n" . ido-next-match)
+              ("C-p" . ido-prev-match)))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (dolist (fun '(upcase-region down-case-region)) (put fun 'disabled nil))
