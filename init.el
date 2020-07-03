@@ -267,7 +267,8 @@
 (use-package eglot
   :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode) . eglot-ensure))
   :bind (:map eglot-mode-map
-              ("<S-f6>" . eglot-rename))
+              ("C-c C-r" . eglot-rename)
+              ("H-r" . eglot-rename))
   :config
   (progn
     (setenv "CLASSPATH"
