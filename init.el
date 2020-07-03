@@ -132,25 +132,32 @@
 (use-package tool-bar-mode
   :bind ("<f9>" . tool-bar-mode))
 (use-package window
-  :functions (other-window)
-  :bind (("C-o" . (lambda (count) (interactive "p*") (other-window count)))
-         ("M-o" . (lambda (count) (interactive "p*") (other-window (- count))))
+  :commands (split-window-right split-window-below)
+  :preface (progn
+            (defun other-window-reverse (count)
+              (interactive "p*") (other-window count))
+            (defun split-right-switch ()
+              (interactive)
+              (split-window-right)
+              (other-window 1)
+              (call-interactively
+               (if ido-mode #'ido-switch-buffer
+                 #'switch-to-buffer )))
+            (defun split-below-switch ()
+              (interactive)
+              (split-window-below)
+              (other-window 1)
+              (call-interactively
+               (if ido-mode #'ido-switch-buffer
+                 #'switch-to-buffer ))))
+  :bind (("C-o" . other-window)
+         ("M-o" . other-window-reverse)
          ("C-q" . delete-window)
          ("s-q" . delete-window)
          ("M-q" . (lambda () (interactive) (kill-buffer (current-buffer))))
          ("s-b" . switch-to-buffer)
-         ("C-x |" . (lambda () (interactive)
-                      (split-window-right)
-                      (other-window 1)
-                      (call-interactively
-                        (if ido-mode #'ido-switch-buffer
-                                   #'switch-to-buffer ))))
-         ("C-x _" . (lambda () (interactive)
-                      (split-window-below)
-                      (other-window 1)
-                      (call-interactively
-                       (if ido-mode #'ido-switch-buffer
-                         #'switch-to-buffer ))))))
+         ("C-x |" . split-right-switch)
+         ("C-x _" . split-below-switch)))
 (use-package windresize
   :bind (("s-w" . windresize)))
 (use-package windmove
@@ -174,25 +181,24 @@
          ("<f5>"     . recompile)))
 (use-package sgml-mode ;html
   :after (prog-mode)
-  :functions sgml-close-tag
-  :preface
-  (progn
-    (defun html-/-close-tag ()
-      (interactive)
-      (insert "/")
-      (when (= ?< (char-before (1- (point))))
-        (backward-delete-char 2)
-        (sgml-close-tag)
-        (when (= ?> (char-after))
-          (delete-char 1))))
-    (defun html-=-quotes ()
-      (interactive)
-      (insert "=")
-      (when (save-excursion
-              (beginning-of-line)
-              (looking-at ".*<\\([^<>]\\|\n\\)*="))
-        (insert "\"\"")
-        (backward-char 1))))
+  :commands sgml-close-tag
+  :preface (progn
+             (defun html-/-close-tag ()
+               (interactive)
+               (insert "/")
+               (when (= ?< (char-before (1- (point))))
+                 (backward-delete-char 2)
+                 (sgml-close-tag)
+                 (when (= ?> (char-after))
+                   (delete-char 1))))
+             (defun html-=-quotes ()
+               (interactive)
+               (insert "=")
+               (when (save-excursion
+                       (beginning-of-line)
+                       (looking-at ".*<\\([^<>]\\|\n\\)*="))
+                 (insert "\"\"")
+                 (backward-char 1))))
   :bind (:map html-mode-map
               ("/" . html-/-close-tag)
               ("=" . html-=-quotes)
@@ -200,11 +206,11 @@
               ("C-M-b" . sgml-skip-tag-backward))
   :hook ((html-mode . flyspell-mode-off)
          (html-mode . sgml-electric-tag-pair-mode))
-  :config
-  (progn (setq html-mode-hook (append prog-mode-hook html-mode-hook))
-         (dolist (mode '(html-mode mhtml-mode))
-           (setf (alist-get mode hs-special-modes-alist)
-                 '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))))
+  :config (progn
+            (setq html-mode-hook (append prog-mode-hook html-mode-hook))
+            (dolist (mode '(html-mode mhtml-mode))
+              (setf (alist-get mode hs-special-modes-alist)
+                    '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))))
 (use-package apropos
   :bind (("<help> a" . apropos)))
 (use-package simple
