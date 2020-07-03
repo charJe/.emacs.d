@@ -78,9 +78,6 @@
  '(org-icalendar-use-deadline (quote (event-if-not-todo event-if-todo todo-due)))
  '(org-icalendar-use-scheduled (quote (event-if-not-todo event-if-todo)))
  '(org-startup-with-inline-images t)
- '(package-selected-packages
-   (quote
-    (diminish ivy cider clojure-mode polymode yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode pcre2el multiple-cursors mips-mode magit kotlin-mode htmlize go-mode gnuplot-mode expand-region ess es-windows es-lib elixir-mode eglot dart-mode company color-theme-sanityinc-solarized bnf-mode bison-mode bfbuilder auctex)))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tab-width 4)
