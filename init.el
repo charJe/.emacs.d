@@ -132,25 +132,32 @@
 (use-package tool-bar-mode
   :bind ("<f9>" . tool-bar-mode))
 (use-package window
-  :functions (other-window)
-  :bind (("C-o" . (lambda (count) (interactive "p*") (other-window count)))
-         ("M-o" . (lambda (count) (interactive "p*") (other-window (- count))))
+  :functions (split-window-right split-window-below)
+  :config (progn
+            (defun other-window-reverse (count)
+              (interactive "p*") (other-window count))
+            (defun split-right-switch ()
+              (interactive)
+              (split-window-right)
+              (other-window 1)
+              (call-interactively
+               (if ido-mode #'ido-switch-buffer
+                 #'switch-to-buffer )))
+            (defun split-below-switch ()
+              (interactive)
+              (split-window-below)
+              (other-window 1)
+              (call-interactively
+               (if ido-mode #'ido-switch-buffer
+                 #'switch-to-buffer ))))
+  :bind (("C-o" . other-window)
+         ("M-o" . other-window-reverse)
          ("C-q" . delete-window)
          ("s-q" . delete-window)
          ("M-q" . (lambda () (interactive) (kill-buffer (current-buffer))))
          ("s-b" . switch-to-buffer)
-         ("C-x |" . (lambda () (interactive)
-                      (split-window-right)
-                      (other-window 1)
-                      (call-interactively
-                        (if ido-mode #'ido-switch-buffer
-                                   #'switch-to-buffer ))))
-         ("C-x _" . (lambda () (interactive)
-                      (split-window-below)
-                      (other-window 1)
-                      (call-interactively
-                       (if ido-mode #'ido-switch-buffer
-                         #'switch-to-buffer ))))))
+         ("C-x |" . split-right-switch)
+         ("C-x _" . split-below-switch)))
 (use-package windresize
   :bind (("s-w" . windresize)))
 (use-package windmove
