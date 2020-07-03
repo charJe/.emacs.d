@@ -201,16 +201,15 @@
   :hook ((html-mode . flyspell-mode-off)
          (html-mode . sgml-electric-tag-pair-mode))
   :config
-  ;; (setq html-mode-hook (append html-mode-hook prog-mode-hook))
-  (dolist (mode '(html-mode mhtml-mode))
-    (setf (alist-get mode hs-special-modes-alist)
-          '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil))))
+  (progn (setq html-mode-hook (append prog-mode-hook html-mode-hook))
+         (dolist (mode '(html-mode mhtml-mode))
+           (setf (alist-get mode hs-special-modes-alist)
+                 '("<[^</>]+>" "</[^<>]+>" "<!--" sgml-skip-tag-forward nil)))))
 (use-package apropos
   :bind (("<help> a" . apropos)))
 (use-package simple
   :hook ((prog-mode . (lambda () (toggle-truncate-lines 1)))
-         ;; (text-mode . (lambda () (visual-line-mode 1)))
-         )
+         (text-mode . (lambda () (visual-line-mode 1))))
   :bind (("M-k" . kill-whole-line)
          ("M-'" . quoted-insert)
          ("C-M-h" . backward-kill-word))
