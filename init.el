@@ -132,15 +132,25 @@
 (use-package tool-bar-mode
   :bind ("<f9>" . tool-bar-mode))
 (use-package window
-  :functions other-window
-  :bind (("C-o" . (lambda () (interactive) (other-window 1)))
-         ("M-o" . (lambda () (interactive) (other-window -1)))
+  :functions (other-window)
+  :bind (("C-o" . (lambda (count) (interactive "p*") (other-window count)))
+         ("M-o" . (lambda (count) (interactive "p*") (other-window (- count))))
          ("C-q" . delete-window)
          ("s-q" . delete-window)
          ("M-q" . (lambda () (interactive) (kill-buffer (current-buffer))))
          ("s-b" . switch-to-buffer)
-         ("C-x |" . split-window-right)
-         ("C-x _" . split-window-below)))
+         ("C-x |" . (lambda () (interactive)
+                      (split-window-right)
+                      (other-window 1)
+                      (call-interactively
+                        (if ido-mode #'ido-switch-buffer
+                                   #'switch-to-buffer ))))
+         ("C-x _" . (lambda () (interactive)
+                      (split-window-below)
+                      (other-window 1)
+                      (call-interactively
+                       (if ido-mode #'ido-switch-buffer
+                         #'switch-to-buffer ))))))
 (use-package windresize
   :bind (("s-w" . windresize)))
 (use-package windmove
