@@ -28,14 +28,9 @@
   (forward-line -1)
   (end-of-line nil))
 
-(defun insert-file-name ()
+(defun insert-buffer-name ()
   (interactive)
-  (let ((filename (cl-loop for buffer in (buffer-list)
-                           do (let ((filename (buffer-file-name buffer)))
-                                (when filename
-                                  (cl-return filename))))))
-    (when filename
-      (insert (file-name-base filename)))))
+  (insert (buffer-name (current-buffer))))
 
 (defun increment-number-at-point (&optional arg)
   "Increment the number at point by ARG."
@@ -147,12 +142,15 @@
 
 (defun add-prog-pretty-symbols ()
   "The usual pretty symbols for programming."
-  (add-pretty-symbols
-   '("lambda" ?λ
-     "->" ?→
-     "=>" ?⇒
-     "<=" ?≤
-     ">=" ?≥)))
+  (add-pretty-symbols '("lambda" ?λ "<=" ?≤ ">=" ?≥)))
 
+;;; ligatures
+(defun tie (compositions)
+  "Tie some each item in COMPOSITIONS together.
+Each item in COMPOSITIONS must start with the same first character.
+Each compositions must be supported by the font."
+  (let ((char (string-to-char (substring (car compositions) 0 1))))
+    (set-char-table-range composition-function-table char
+                        `([,(regexp-opt compositions) 0 font-shape-gstring]))))
 (provide 'charles)
 ;;; charles.el ends here
