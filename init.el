@@ -152,7 +152,7 @@
   :commands (split-window-right split-window-below)
   :preface (progn
             (defun other-window-reverse (count)
-              (interactive "p*") (other-window count))
+              (interactive "p") (other-window count))
             (defun split-right-switch ()
               (interactive)
               (split-window-right)
