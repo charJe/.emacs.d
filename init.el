@@ -1,10 +1,5 @@
 ;;;; init.el
 ;;;; Charles Jackson
-(progn ;package setup
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  (package-initialize)
-  (require 'use-package))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,23 +19,18 @@
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
  '(delete-selection-mode t)
  '(display-battery-mode t)
- '(display-line-numbers-type 'visual)
+ '(display-line-numbers-type t)
  '(display-time-mode t)
  '(electric-pair-mode t)
  '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
  '(frame-background-mode 'light)
  '(frame-title-format "Emacs" t)
- '(geiser-default-implementation 'gambit)
  '(gud-pdb-command-name "python -m pdb")
  '(hs-allow-nesting t t)
  '(hs-hide-comments-when-hiding-all nil)
  '(hs-isearch-open t)
- '(ido-mode 'both nil (ido))
- '(ido-separator "
-")
  '(indent-tabs-mode nil)
  '(inferior-lisp-program "sbcl")
- '(inhibit-startup-screen t)
  '(initial-scratch-message
    "
 ;;    C-x        Hold Ctrl and press x
@@ -74,14 +64,10 @@
  '(org-icalendar-use-scheduled '(event-if-not-todo event-if-todo))
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(geiser yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode polymode pcre2el multiple-cursors mips-mode magit kotlin-mode julia-mode htmlize go-mode gnuplot-mode expand-region es-windows es-lib elixir-mode eglot diminish dart-mode company color-theme-sanityinc-solarized cider bnf-mode bison-mode bfbuilder auctex))
- '(scroll-bar-mode nil)
+   '(mmm-mode yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode polymode php-mode pcre2el multiple-cursors mips-mode markdown-mode magit kotlin-mode julia-mode htmlize go-mode gnuplot-mode flycheck-grammarly expand-region es-windows es-lib elixir-mode eglot diminish dart-mode company color-theme-sanityinc-solarized cider bnf-mode bison-mode bfbuilder auctex))
  '(show-paren-mode t)
- '(tab-bar-mode nil)
  '(tab-width 4)
  '(tool-bar-mode nil)
- '(tool-bar-position 'left)
- '(tool-bar-style 'image)
  '(tooltip-mode nil)
  '(treemacs-collapse-dirs 3)
  '(treemacs-display-in-side-window nil)
@@ -117,7 +103,7 @@
  '(tab-bar ((t (:inherit mode-line))))
  '(tab-bar-tab-inactive ((t (:inherit mode-line-inactive)))))
 (use-package charles
-  :load-path "~/.emacs.d/charles/" 
+  :load-path "~/.emacs.d/charles/"
   :hook ((prog-mode . prettify-symbols-mode)
          (prog-mode . add-prog-pretty-symbols))
   :bind (("C-M-y" . insert-lambda)
@@ -131,14 +117,14 @@
          ("<M-down>" . move-line-down)
          ("C-c C-f" . insert-file-name)
          ("H-c f" . insert-buffer-name)
-         ("s-<" . #'scroll-right) 
-         ("s->" . #'scroll-left))
+         ("s-<" . (lambda () (interactive) (scroll-right 8)))
+         ("s->" . (lambda () (interactive) (scroll-left 8))))
   :config (progn
-            (tie '("!=" "!=="))
-            (tie '("/="))
-            (tie '("==" "===" "=>"))
-            (tie '("->"))
-            (tie '("<-"))))
+            (tie ("!=" "!=="))
+            (tie ("/="))
+            (tie ("==" "===" "=>"))
+            (tie ("->"))
+            (tie ("<-"))))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes
@@ -148,6 +134,8 @@
             (sd)))
 (use-package tool-bar
   :bind ("<f9>" . tool-bar-mode))
+(use-package menu-bar
+  :bind ([mouse-3] . menu-bar-open))
 (use-package window
   :commands (split-window-right split-window-below)
   :preface (progn
@@ -194,11 +182,12 @@
          ("H-c M-<" . mc/skip-to-previous-like-this)
          ("H-c C-a" . mc/mark-all-like-this)))
 (use-package compile
+  :hook ((compilation-start . end-of-buffer))
   :bind (("ESC <f5>" . compile)
          ("<f5>"     . recompile)))
 (use-package sgml-mode ;html
   :after (prog-mode)
-  :commands sgml-close-tag
+  :commands (sgml-close-tag)
   :preface (progn
              (defun html-/-close-tag ()
                (interactive)
@@ -211,9 +200,14 @@
              (defun html-=-quotes ()
                (interactive)
                (insert "=")
-               (when (save-excursion
-                       (beginning-of-line)
-                       (looking-at ".*<\\([^<>]\\|\n\\)*="))
+               (when (and (/= ?? (char-before))
+                      (save-excursion
+                       (forward-char -1)
+                       (while (and (> (point) (point-min))
+                                   (/= ?< (char-after))
+                                   (/= ?> (char-after)))
+                         (forward-char -1))
+                       (looking-at "[^<>]*<\\([^<>]\\|\n\\)*=")))
                  (insert "\"\"")
                  (backward-char 1))))
   :bind (:map html-mode-map
@@ -247,7 +241,8 @@
          (c-mode . subword-mode)))
 (use-package yasnippet
   :hook ((prog-mode . yas-minor-mode)
-         (org-mode . yas-minor-mode)))
+         (org-mode . yas-minor-mode)
+         (yas-minor-mode . yas-reload-all)))
 (use-package company
   :diminish "co"
   :hook (((prog-mode sly-mrepl-mode) . company-mode))
@@ -283,28 +278,29 @@
               ("<f5>"     . eval-buffer)
               ("C-M-s-x"  . edebug-defun)))
 (use-package rainbow-delimiters
-  :hook ((lisp-mode emacs-lisp-mode scheme-mode clojure-mode) . rainbow-delimiters-mode))
-(use-package togetherly)
+  :hook (((lisp-mode emacs-lisp-mode scheme-mode clojure-mode) . rainbow-delimiters-mode)))
+(use-package lambdanative
+  :load-path "~/.emacs.d/lisp/")
 (use-package magit
   :bind (("C-x v g" . magit)))
 (use-package eglot
-  :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode) . eglot-ensure))
+  :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode dart-mode) . eglot-ensure))
   :bind (:map eglot-mode-map
               ("C-c r" . eglot-rename)
-              ("H-r"     . eglot-rename))
+              ("H-r"   . eglot-rename))
   :config
   (progn
     (setenv "CLASSPATH"
             (concat (getenv "CLASSPATH") ":/home/charles/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar"))
-    (add-to-list 'eglot-server-programs '(clojure-mode . ("bash" "-c" "clojure-lsp")))
-    (add-to-list 'eglot-server-programs '(html-mode . ("html-languageserver" "--stdio")))
-    (add-to-list 'eglot-server-programs '(css-mode . ("css-languageserver" "--stdio")))
-    (add-to-list 'eglot-server-programs '(typescript-mode . ("javascript-typescript-stdio")))
-    (add-to-list 'eglot-server-programs '(js-mode . ("javascript-typescript-stdio")))
-    (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
-    (add-to-list 'eglot-server-programs '(c-mode . ("clangd")))
-    (add-to-list 'eglot-server-programs '(rust-mode . ("rls")))
-    (add-to-list 'eglot-server-programs '(elixir-mode . ("~/elixir-ls/release/language_server.sh")))))
+    (mapc (lambda (pair)
+            (add-to-list 'eglot-server-programs pair))
+          '((clojure-mode . ("bash" "-c" "clojure-lsp"))
+            (html-mode . ("html-languageserver" "--stdio"))
+            (css-mode . ("css-languageserver" "--stdio"))
+            (js-mode . ("javascript-typescript-stdio"))
+            (c++-mode . ("clangd"))
+            (c-mode . ("clangd"))
+            (rust-mode . ("rls"))))))
 (use-package extra-font-lock
   :load-path "~/.emacs.d/charles/"
   :config (progn ;extra highlighting
@@ -321,14 +317,6 @@
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
-(use-package ido
-  :bind (("C-x C-d" . ido-dired)
-         :map ido-common-completion-map
-              ("C-n"    . ido-next-match)
-              ("<down>" . ido-next-match)
-              ("C-p"    . ido-prev-match)
-              ("<up>"   . ido-prev-match)))
-(use-package geiser)
 (use-package tab-bar
   :bind (("C-S-t" . (lambda () (interactive) (tab-bar-mode 1) (tab-bar-new-tab)))
          ("M-1" . (lambda () (interactive) (tab-bar-select-tab 1)))
@@ -343,25 +331,14 @@
          ("M-<left>" . (lambda () (interactive) (tab-bar-move-tab -1)))
          ("M-<right>" . tab-bar-move-tab))
   :config (progn
-            (bind-key* "C-M-q" (lambda () (interactive) (tab-bar-close-tab)
+            (bind-key* "C-M-q" (lambda () (interactive)
+                                 (tab-bar-close-tab)
                                  (when (= (length (tab-bar-tabs)) 1)
-                                   (tab-bar-mode 0))))
-            (setf tab-bar-close-button
-                #(" ×" 0 2 (display (image :type xpm :file "tabs/close.xpm"
-                                           :margin (2 . 0) :ascent center)
-                                    close-tab t :help "Click to close tab")))))
+                                   (tab-bar-mode 0))))))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
-  (dolist (fun '(upcase-region down-case-region scroll-left scroll-right))
+  (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))
     (put fun 'disabled nil))
-  (let ((x (+ 14 (car (frame-position))))
-        (y (+ 14 (cdr (frame-position))))
-        (width (* 130 (frame-char-width)))
-        (height (* 47 (frame-char-height))))
-    (set-frame-position (selected-frame)
-                        (abs (- x (/ (- width (frame-pixel-width)) 2) 32))
-                        (abs (- y (- height (frame-pixel-height)))))
-    (set-frame-size (selected-frame) width height :pixelwise))
   (setq-default line-spacing .2)
   (switch-to-buffer "*scratch*"))
  
