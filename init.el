@@ -58,6 +58,7 @@
 ")
  '(menu-bar-mode nil)
  '(org-agenda-default-appointment-duration 60)
+ '(org-agenda-files '("~/Dropbox/Visa.org" "~/Dropbox/Charles.org"))
  '(org-bullets-bullet-list '("●"))
  '(org-hide-emphasis-markers t)
  '(org-icalendar-use-deadline '(event-if-not-todo event-if-todo todo-due))
@@ -120,18 +121,19 @@
          ("s-<" . (lambda () (interactive) (scroll-right 8)))
          ("s->" . (lambda () (interactive) (scroll-left 8))))
   :config (progn
-            (tie ("!=" "!=="))
-            (tie ("/="))
-            (tie ("==" "===" "=>"))
-            (tie ("->"))
-            (tie ("<-"))))
+            (tie "!=" "!==")
+            (tie "/=")
+            (tie "==" "===" "=>")
+            (tie "->")
+            (tie "<-")))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes
             (q-th sl 'sanityinc-solarized-light)
             (q-th sd 'sanityinc-solarized-dark)
             (q-th wom 'wombat)
-            (sd)))
+            (q-th adt 'adwaita)
+            (sl)))
 (use-package tool-bar
   :bind ("<f9>" . tool-bar-mode))
 (use-package menu-bar
@@ -309,11 +311,11 @@
             (add-extra-syntax regexp-operators 'flex-mode)
             (add-extra-syntax r-operators 'ess-r-mode 'inferior-ess-r-mode)
             (add-extra-syntax python-operators 'python-mode)))
-(use-package poly-lisp-html
-  :load-path "~/quicklisp/dists/quicklisp/software/markup-20191130-git/")
-(use-package polymode
-  :after (poly-lisp-html)
-  :mode ("\\.htmlisp$" . poly-lisp-html-mode))
+;; (use-package poly-lisp-html
+;;   :load-path "~/quicklisp/dists/quicklisp/software/markup-20191130-git/")
+;; (use-package polymode
+;;   :after (poly-lisp-html)
+;;   :mode ("\\.htmlisp$" . poly-lisp-html-mode))
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
@@ -341,5 +343,5 @@
     (put fun 'disabled nil))
   (setq-default line-spacing .2)
   (switch-to-buffer "*scratch*"))
- 
-(use-package gudder-jdb :load-path "~/Desktop/Gudder/")
+
+;; (use-package gudder-jdb :load-path "~/Desktop/Gudder/")

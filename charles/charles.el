@@ -145,12 +145,12 @@
   (add-pretty-symbols '("lambda" ?λ "<=" ?≤ ">=" ?≥)))
 
 ;;; ligatures
-(defun tie (compositions)
+(defmacro tie (&rest compositions)
   "Tie some each item in COMPOSITIONS together.
 Each item in COMPOSITIONS must start with the same first character.
 Each compositions must be supported by the font."
   (let ((char (string-to-char (substring (car compositions) 0 1))))
-    (set-char-table-range composition-function-table char
-                        `([,(regexp-opt compositions) 0 font-shape-gstring]))))
+    `(set-char-table-range composition-function-table ,char
+                           '([,(regexp-opt compositions) 0 font-shape-gstring]))))
 (provide 'charles)
 ;;; charles.el ends here
