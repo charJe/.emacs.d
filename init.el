@@ -15,6 +15,9 @@
  '(battery-mode-line-format " [%b%p%%] ")
  '(beacon-color "#d33682")
  '(column-number-mode t)
+ '(company-idle-delay 0)
+ '(company-show-numbers 'left)
+ '(company-tooltip-idle-delay 0)
  '(custom-safe-themes
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
  '(delete-selection-mode t)
@@ -57,6 +60,7 @@
 
 ")
  '(menu-bar-mode nil)
+ '(mmm-submode-mode-line-format "~m")
  '(org-agenda-default-appointment-duration 60)
  '(org-agenda-files '("~/Dropbox/Visa.org" "~/Dropbox/Charles.org"))
  '(org-bullets-bullet-list '("●"))
@@ -65,8 +69,9 @@
  '(org-icalendar-use-scheduled '(event-if-not-todo event-if-todo))
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(mmm-mode yasnippet yaml-mode windresize use-package typescript-mode treemacs togetherly sly rust-mode restclient rainbow-delimiters racket-mode polymode php-mode pcre2el multiple-cursors mips-mode markdown-mode magit kotlin-mode julia-mode htmlize go-mode gnuplot-mode flycheck-grammarly expand-region es-windows es-lib elixir-mode eglot diminish dart-mode company color-theme-sanityinc-solarized cider bnf-mode bison-mode bfbuilder auctex))
+   '(color-theme-sanityinc-solarized clojure-mode font-lock-studio mmm-mode yasnippet windresize use-package treemacs togetherly sly restclient rainbow-delimiters pcre2el multiple-cursors mips-mode magit htmlize flycheck-grammarly expand-region eglot diminish company))
  '(show-paren-mode t)
+ '(sql-mysql-options '("--local-infile=1"))
  '(tab-width 4)
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
@@ -75,6 +80,27 @@
  '(treemacs-filewatch-mode t)
  '(treemacs-follow-mode t)
  '(treemacs-fringe-indicator-mode t)
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   '((20 . "#dc322f")
+     (40 . "#cb4b16")
+     (60 . "#b58900")
+     (80 . "#859900")
+     (100 . "#2aa198")
+     (120 . "#268bd2")
+     (140 . "#d33682")
+     (160 . "#6c71c4")
+     (180 . "#dc322f")
+     (200 . "#cb4b16")
+     (220 . "#b58900")
+     (240 . "#859900")
+     (260 . "#2aa198")
+     (280 . "#268bd2")
+     (300 . "#d33682")
+     (320 . "#6c71c4")
+     (340 . "#dc322f")
+     (360 . "#cb4b16")))
+ '(vc-annotate-very-old-color nil)
  '(wdired-allow-to-change-permissions t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -83,10 +109,10 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Borg Sans Mono" :foundry "1ASC" :slant normal :weight normal :height 139 :width normal))))
  '(column-marker-1 ((t (:inherit cursor))))
- '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray36"))))
- '(company-scrollbar-fg ((t (:background "gray50"))))
- '(company-tooltip ((t (:background "dim gray" :foreground "dark gray"))))
- '(company-tooltip-selection ((t (:background "gray44" :foreground "white smoke"))))
+ '(company-scrollbar-bg ((t (:inherit mode-line-inactive :box nil))))
+ '(company-scrollbar-fg ((t (:inherit mode-line :inverse-video t :box nil))))
+ '(company-tooltip ((t (:inherit mode-line-inactive :box nil))))
+ '(company-tooltip-selection ((t (:inherit mode-line))))
  '(completions-common-part ((t (:inherit minibuffer-prompt))))
  '(diff-context ((t (:inherit default))))
  '(geiser-font-lock-autodoc-current-arg ((t (:inherit font-lock-keyword-face :weight bold))))
@@ -97,6 +123,7 @@
  '(geiser-font-lock-repl-output ((t (:inherit font-lock-string-face))))
  '(geiser-font-lock-xref-link ((t (:inherit link))))
  '(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
+ '(org-block ((t (:inherit default))))
  '(sly-error-face ((t (:inherit flymake-error))))
  '(sly-note-face ((t (:inherit flymake-note))))
  '(sly-style-warning-face ((t (:inherit flymake-warning))))
@@ -133,7 +160,7 @@
             (q-th sd 'sanityinc-solarized-dark)
             (q-th wom 'wombat)
             (q-th adt 'adwaita)
-            (sl)))
+            (sd)))
 (use-package tool-bar
   :bind ("<f9>" . tool-bar-mode))
 (use-package menu-bar
@@ -182,7 +209,8 @@
          ("H-c H->" . mc/skip-to-next-like-this)
          ("H-<"     . mc/mark-previous-like-this)
          ("H-c M-<" . mc/skip-to-previous-like-this)
-         ("H-c C-a" . mc/mark-all-like-this)))
+         ("H-c C-a" . mc/mark-all-like-this)
+         ("<H-mouse-1>" . mc/add-cursor-on-click)))
 (use-package compile
   :hook ((compilation-start . end-of-buffer))
   :bind (("ESC <f5>" . compile)
@@ -249,6 +277,8 @@
   :diminish "co"
   :hook (((prog-mode sly-mrepl-mode) . company-mode))
   :bind (:map company-mode-map ("M-/" . company-complete)))
+(use-package sly
+  :bind (:map sly-mode-map ("C-M-x" . sly-compile-defun)))
 (use-package hideshow
   :hook ((prog-mode . hs-minor-mode))
   :bind (:map hs-minor-mode-map
@@ -293,29 +323,23 @@
   :config
   (progn
     (setenv "CLASSPATH"
-            (concat (getenv "CLASSPATH") ":/home/charles/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar"))
+            (concat (getenv "CLASSPATH") ":~/.emcas.d/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar"))
     (mapc (lambda (pair)
             (add-to-list 'eglot-server-programs pair))
           '((clojure-mode . ("bash" "-c" "clojure-lsp"))
-            (html-mode . ("html-languageserver" "--stdio"))
+            ;; (html-mode . ("html-languageserver" "--stdio"))
             (css-mode . ("css-languageserver" "--stdio"))
             (js-mode . ("javascript-typescript-stdio"))
             (c++-mode . ("clangd"))
-            (c-mode . ("clangd"))
-            (rust-mode . ("rls"))))))
+            (c-mode . ("clangd"))))))
 (use-package extra-font-lock
   :load-path "~/.emacs.d/charles/"
   :config (progn ;extra highlighting
             (add-extra-syntax c-like-operators
                               'c-mode 'c++-mode 'java-mode 'rust-mode 'typescript-mode 'js-mode 'dart-mode 'sql-mode 'bison-mode)
             (add-extra-syntax regexp-operators 'flex-mode)
-            (add-extra-syntax r-operators 'ess-r-mode 'inferior-ess-r-mode)
-            (add-extra-syntax python-operators 'python-mode)))
-;; (use-package poly-lisp-html
-;;   :load-path "~/quicklisp/dists/quicklisp/software/markup-20191130-git/")
-;; (use-package polymode
-;;   :after (poly-lisp-html)
-;;   :mode ("\\.htmlisp$" . poly-lisp-html-mode))
+            (add-extra-syntax python-operators 'python-mode)
+            (add-extra-syntax lisp-operators 'lisp-mode 'emacs-lisp-mode 'lisp-interaction-mode)))
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
