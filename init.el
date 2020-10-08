@@ -1,5 +1,9 @@
 ;;;; init.el
 ;;;; Charles Jackson
+;;; enviroment variables
+(exec-path-from-shell-initialize)
+(dolist (var '("PATH"))
+  (exec-path-from-shell-copy-env var))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -21,8 +25,6 @@
  '(custom-safe-themes
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
  '(delete-selection-mode t)
- '(display-battery-mode t)
- '(display-line-numbers-type t)
  '(display-time-mode t)
  '(electric-pair-mode t)
  '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
@@ -59,17 +61,17 @@
 ;;    Press F1 or C-? for further help.
 
 ")
- '(menu-bar-mode nil)
+ '(lsp-java-server-install-dir "/Users/charjack/.emacs.d/eclipse-ls/")
  '(mmm-submode-mode-line-format "~m")
+ '(ns-right-command-modifier 'hyper)
  '(org-agenda-default-appointment-duration 60)
- '(org-agenda-files '("~/Dropbox/Visa.org" "~/Dropbox/Charles.org"))
  '(org-bullets-bullet-list '("●"))
  '(org-hide-emphasis-markers t)
  '(org-icalendar-use-deadline '(event-if-not-todo event-if-todo todo-due))
  '(org-icalendar-use-scheduled '(event-if-not-todo event-if-todo))
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(color-theme-sanityinc-solarized clojure-mode font-lock-studio mmm-mode yasnippet windresize use-package treemacs togetherly sly restclient rainbow-delimiters pcre2el multiple-cursors mips-mode magit htmlize flycheck-grammarly expand-region eglot diminish company))
+   '(lsp-java eglot typescript-mode exec-path-from-shell color-theme-sanityinc-solarized yasnippet windresize use-package treemacs restclient rainbow-delimiters pcre2el multiple-cursors magit expand-region diminish company))
  '(show-paren-mode t)
  '(sql-mysql-options '("--local-infile=1"))
  '(tab-width 4)
@@ -107,7 +109,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Borg Sans Mono" :foundry "1ASC" :slant normal :weight normal :height 139 :width normal))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "nil" :family "Menlo"))))
  '(column-marker-1 ((t (:inherit cursor))))
  '(company-scrollbar-bg ((t (:inherit mode-line-inactive :box nil))))
  '(company-scrollbar-fg ((t (:inherit mode-line :inverse-video t :box nil))))
@@ -115,25 +117,12 @@
  '(company-tooltip-selection ((t (:inherit mode-line))))
  '(completions-common-part ((t (:inherit minibuffer-prompt))))
  '(diff-context ((t (:inherit default))))
- '(geiser-font-lock-autodoc-current-arg ((t (:inherit font-lock-keyword-face :weight bold))))
- '(geiser-font-lock-autodoc-identifier ((t (:inherit font-lock-function-name-face))))
- '(geiser-font-lock-doc-link ((t (:inherit link))))
- '(geiser-font-lock-doc-title ((t (:inherit org-document-title))))
- '(geiser-font-lock-error-link ((t (:inherit link))))
- '(geiser-font-lock-repl-output ((t (:inherit font-lock-string-face))))
- '(geiser-font-lock-xref-link ((t (:inherit link))))
  '(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
  '(org-block ((t (:inherit default))))
- '(sly-error-face ((t (:inherit flymake-error))))
- '(sly-note-face ((t (:inherit flymake-note))))
- '(sly-style-warning-face ((t (:inherit flymake-warning))))
- '(sly-warning-face ((t (:inherit flymake-warning))))
  '(tab-bar ((t (:inherit mode-line))))
  '(tab-bar-tab-inactive ((t (:inherit mode-line-inactive)))))
 (use-package charles
   :load-path "~/.emacs.d/charles/"
-  :hook ((prog-mode . prettify-symbols-mode)
-         (prog-mode . add-prog-pretty-symbols))
   :bind (("C-M-y" . insert-lambda)
          ("H-y" . insert-lambda)
          ("C-x s" . save-all)
@@ -146,13 +135,7 @@
          ("C-c C-f" . insert-file-name)
          ("H-c f" . insert-buffer-name)
          ("s-<" . (lambda () (interactive) (scroll-right 8)))
-         ("s->" . (lambda () (interactive) (scroll-left 8))))
-  :config (progn
-            (tie "!=" "!==")
-            (tie "/=")
-            (tie "==" "===" "=>")
-            (tie "->")
-            (tie "<-")))
+         ("s->" . (lambda () (interactive) (scroll-left 8)))))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes
@@ -160,11 +143,9 @@
             (q-th sd 'sanityinc-solarized-dark)
             (q-th wom 'wombat)
             (q-th adt 'adwaita)
-            (sd)))
+            (sl)))
 (use-package tool-bar
   :bind ("<f9>" . tool-bar-mode))
-(use-package menu-bar
-  :bind ([mouse-3] . menu-bar-open))
 (use-package window
   :commands (split-window-right split-window-below)
   :preface (progn
@@ -214,7 +195,11 @@
 (use-package compile
   :hook ((compilation-start . end-of-buffer))
   :bind (("ESC <f5>" . compile)
-         ("<f5>"     . recompile)))
+         ("<f5>"     . recompile))
+  :config
+  ;; Add color formatting to *compilation* buffer
+  (add-hook 'compilation-filter-hook
+            (lambda () (ansi-color-apply-on-region (point-min) (point-max)))))
 (use-package sgml-mode ;html
   :after (prog-mode)
   :commands (sgml-close-tag)
@@ -258,27 +243,25 @@
   :hook ((prog-mode . (lambda () (toggle-truncate-lines 1)))
          (text-mode . (lambda () (visual-line-mode 1))))
   :bind (("M-k" . kill-whole-line)
-         ("M-'" . quoted-insert))
+         ("M-'" . quoted-insert)
+         ("<home>" . move-beginning-of-line)
+         ("<end>" . move-end-of-line))
   :config (progn
             (bind-key* "C-M-h" #'backward-kill-word)
             (define-key key-translation-map (kbd "C-?") (kbd "<help>"))
             (define-key key-translation-map (kbd "C-h") (kbd "DEL"))))
 (use-package subword
   :hook ((java-mode . subword-mode)
-         (dart-mode . subword-mode)
-         (web-mode . subword-mode)
-         (c++-mode . subword-mode)
-         (c-mode . subword-mode)))
+         (typescript-mode . subword-mode)
+         (js-mode . subword-mode)))
 (use-package yasnippet
   :hook ((prog-mode . yas-minor-mode)
          (org-mode . yas-minor-mode)
          (yas-minor-mode . yas-reload-all)))
 (use-package company
   :diminish "co"
-  :hook (((prog-mode sly-mrepl-mode) . company-mode))
+  :hook ((prog-mode shell-mode) . company-mode)
   :bind (:map company-mode-map ("M-/" . company-complete)))
-(use-package sly
-  :bind (:map sly-mode-map ("C-M-x" . sly-compile-defun)))
 (use-package hideshow
   :hook ((prog-mode . hs-minor-mode))
   :bind (:map hs-minor-mode-map
@@ -293,10 +276,6 @@
 (use-package cc-mode
   :hook ((c-mode   . (lambda () (c-set-style "cc-mode")))
          (c++-mode . (lambda () (c-set-style "cc-mode")))))
-(use-package dart-mode
-  :after (charles)
-  :bind (("C-x C-r"   . flutter-hot-reload)
-         ("C-x C-S-r" . flutter-state-reload)))
 (use-package flyspell
   :hook ((text-mode . flyspell-mode))
   :bind (:map flyspell-mode-map
@@ -311,35 +290,36 @@
               ("C-M-s-x"  . edebug-defun)))
 (use-package rainbow-delimiters
   :hook (((lisp-mode emacs-lisp-mode scheme-mode clojure-mode) . rainbow-delimiters-mode)))
-(use-package lambdanative
-  :load-path "~/.emacs.d/lisp/")
 (use-package magit
   :bind (("C-x v g" . magit)))
+(use-package lsp-java
+  :ensure t
+  :hook ((java-mode) . lsp)
+  :bind (:map lsp-mode-map
+              ("C-c r" . lsp-rename)
+              ("H-r"   . lsp-rename)))
 (use-package eglot
-  :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode dart-mode) . eglot-ensure))
+  :ensure t
+  :hook (((js-mode typescript-mode css-mode) . eglot-ensure))
   :bind (:map eglot-mode-map
               ("C-c r" . eglot-rename)
               ("H-r"   . eglot-rename))
   :config
   (progn
-    (setenv "CLASSPATH"
-            (concat (getenv "CLASSPATH") ":~/.emcas.d/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_1.5.500.v20190715-1310.jar"))
     (mapc (lambda (pair)
             (add-to-list 'eglot-server-programs pair))
           '((clojure-mode . ("bash" "-c" "clojure-lsp"))
-            ;; (html-mode . ("html-languageserver" "--stdio"))
             (css-mode . ("css-languageserver" "--stdio"))
-            (js-mode . ("javascript-typescript-stdio"))
+            (js-mode . ("javascript-typescript-langserver" "--port" :autoport))
+            (typescript-mode . ("javascript-typescript-langserver" "--port" :autoport))
             (c++-mode . ("clangd"))
             (c-mode . ("clangd"))))))
 (use-package extra-font-lock
   :load-path "~/.emacs.d/charles/"
   :config (progn ;extra highlighting
-            (add-extra-syntax c-like-operators
-                              'c-mode 'c++-mode 'java-mode 'rust-mode 'typescript-mode 'js-mode 'dart-mode 'sql-mode 'bison-mode)
+            (add-extra-syntax c-like-operators 'java-mode  'typescript-mode 'js-mode 'sql-mode)
             (add-extra-syntax regexp-operators 'flex-mode)
-            (add-extra-syntax python-operators 'python-mode)
-            (add-extra-syntax lisp-operators 'lisp-mode 'emacs-lisp-mode 'lisp-interaction-mode)))
+            (add-extra-syntax python-operators 'python-mode)))
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
@@ -363,9 +343,9 @@
                                    (tab-bar-mode 0))))))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
+  ;; enable functions
   (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))
     (put fun 'disabled nil))
   (setq-default line-spacing .2)
-  (switch-to-buffer "*scratch*"))
-
-;; (use-package gudder-jdb :load-path "~/Desktop/Gudder/")
+  (switch-to-buffer "*scratch*")
+  (cd "~"))
