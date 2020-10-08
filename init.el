@@ -48,10 +48,11 @@
 ;;    C-y        Paste text
 ;;    M-y        Paste previous text
 
+;;    C-g        Cancel current action and regain control
 ;;    C-x C-f    Open file
 ;;    C-x |      Split window vertically
 ;;    C-x _      Split window horizontally
-;;    C-x b        Switch buffer in current window
+;;    C-x b      Switch buffer in current window
 ;;    C-q        Move window into background
 ;;    C-o        Cycle focus between windows
 
@@ -61,7 +62,7 @@
 ;;    Press F1 or C-? for further help.
 
 ")
- '(lsp-java-server-install-dir "/Users/charjack/.emacs.d/eclipse-ls/")
+ '(lsp-java-server-install-dir "~/.emacs.d/eclipse-ls/")
  '(mmm-submode-mode-line-format "~m")
  '(ns-right-command-modifier 'hyper)
  '(org-agenda-default-appointment-duration 60)
