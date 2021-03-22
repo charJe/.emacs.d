@@ -72,7 +72,7 @@
  '(org-icalendar-use-scheduled '(event-if-not-todo event-if-todo))
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(lsp-java eglot typescript-mode exec-path-from-shell color-theme-sanityinc-solarized yasnippet windresize use-package treemacs restclient rainbow-delimiters pcre2el multiple-cursors magit expand-region diminish company))
+   '(clojure-mode docker dockerfile-mode lsp-java eglot typescript-mode exec-path-from-shell color-theme-sanityinc-solarized yasnippet windresize use-package treemacs restclient rainbow-delimiters pcre2el multiple-cursors magit expand-region diminish company))
  '(show-paren-mode t)
  '(sql-mysql-options '("--local-infile=1"))
  '(tab-width 4)
@@ -342,6 +342,8 @@
                                  (tab-bar-close-tab)
                                  (when (= (length (tab-bar-tabs)) 1)
                                    (tab-bar-mode 0))))))
+(use-package docker
+  :bind (("C-x c d" . 'docker)))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   ;; enable functions
