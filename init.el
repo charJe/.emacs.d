@@ -314,7 +314,9 @@
 (use-package lambdanative
   :load-path "~/.emacs.d/lisp/")
 (use-package magit
-  :bind (("C-x v g" . magit)))
+  :after (charles)
+  :bind (("C-x v g" . magit))
+  :hook ((git-commit-setup . insert-ticket)))
 (use-package eglot
   :hook (((java-mode c-mode c++-mode python-mode html-mode css-mode clojure-mode dart-mode) . eglot-ensure))
   :bind (:map eglot-mode-map

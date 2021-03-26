@@ -152,5 +152,23 @@ Each compositions must be supported by the font."
   (let ((char (string-to-char (substring (car compositions) 0 1))))
     `(set-char-table-range composition-function-table ,char
                            '([,(regexp-opt compositions) 0 font-shape-gstring]))))
+
+;;; insert ticket in commits from branch name
+(cl-defun insert-ticket (&optional (separator " - "))
+  (interactive)
+  (when (= (point) (point-min))
+    (let* ((branch-name (remove ?\n (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
+           (first-hyphen (or (seq-position branch-name ?-) 0))
+           (second-hyphen (seq-position (substring branch-name (+ first-hyphen 1)) ?-))
+           (second-hyphen (if second-hyphen
+                               (+ first-hyphen second-hyphen 1)
+                             (length branch-name)))
+           (ticket-name (substring branch-name 0 second-hyphen))
+           (ticket-number (substring ticket-name (+ first-hyphen 1) second-hyphen)))
+      (when (or (/= 0 (string-to-number ticket-number))
+                (string= ticket-number "0"))
+        (insert ticket-name)
+        (insert separator)))))
+
 (provide 'charles)
 ;;; charles.el ends here
