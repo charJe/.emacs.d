@@ -69,7 +69,7 @@
  '(org-icalendar-use-scheduled '(event-if-not-todo event-if-todo))
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(color-theme-sanityinc-solarized clojure-mode font-lock-studio mmm-mode yasnippet windresize use-package treemacs togetherly sly restclient rainbow-delimiters pcre2el multiple-cursors mips-mode magit htmlize flycheck-grammarly expand-region eglot diminish company))
+   '(color-theme-sanityinc-solarized clojure-mode font-lock-studio yasnippet windresize use-package treemacs sly restclient rainbow-delimiters pcre2el multiple-cursors magit htmlize expand-region eglot diminish company docker dockerfile-mode yaml-mode))
  '(show-paren-mode t)
  '(sql-mysql-options '("--local-infile=1"))
  '(tab-width 4)
