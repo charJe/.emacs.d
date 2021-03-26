@@ -130,6 +130,8 @@
  '(sly-warning-face ((t (:inherit flymake-warning))))
  '(tab-bar ((t (:inherit mode-line))))
  '(tab-bar-tab-inactive ((t (:inherit mode-line-inactive)))))
+(use-package find-dired
+  :bind ("C-M-s-f" . find-name-dired))
 (use-package charles
   :load-path "~/.emacs.d/charles/"
   :hook ((prog-mode . prettify-symbols-mode)
