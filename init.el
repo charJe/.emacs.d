@@ -292,7 +292,9 @@
 (use-package rainbow-delimiters
   :hook (((lisp-mode emacs-lisp-mode scheme-mode clojure-mode) . rainbow-delimiters-mode)))
 (use-package magit
-  :bind (("C-x v g" . magit)))
+  :after (charles)
+  :bind (("C-x v g" . magit))
+  :hook ((git-commit-setup . insert-ticket)))
 (use-package lsp-java
   :ensure t
   :hook ((java-mode) . lsp)
