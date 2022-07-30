@@ -1,14 +1,8 @@
 ;;; package extra-font-lock.el
 ;;; Charles Jackson
 
-(defconst regexp-operators
-  (eval-when-compile (regexp-opt '("\"" "\\" "{" "}" "[" "]" "^" "$" "<" ">" "?" "." "*" "+" "-" "|" "(" ")" "/"))))
-(defconst c-like-operators
-  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "%" "^" "=" "!" "~" "[" "]" "&" "|" "?" ":" ","))))
-(defconst python-operators
-  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "%" "^" "=" "!" "~" "[" "]" "&" "|" ":" "{" "}" ","))))
-(defconst r-operators
-  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "%" "^" "=" "!" "~" "[" "]" "&" "|" "?" ":" "," "$"))))
+(defconst haskell-operators
+  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "[" "]" "&" "|" "," "$"))))
 
 (defface font-lock-extra-face
   '((t :inherit 'font-lock-function-name-face))
