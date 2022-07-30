@@ -56,9 +56,26 @@
   (pop-to-buffer (get-buffer "*compilation*"))
   (compilation-mode))
 
+;;; drag buffer
+(defmacro drag-buffer (to from)
+  (let ((to-string (symbol-name to))
+        (from-string (symbol-name from)))
+    `(defun ,(intern (concat "drag-buffer-" to-string)) ()
+       (interactive)
+       (let ((current-buffer (current-buffer)))
+         (,(intern (concat "windmove-" to-string)))
+         (let ((alternate-buffer (current-buffer)))
+           (switch-to-buffer current-buffer)
+           (,(intern (concat "windmove-" from-string)))
+           (switch-to-buffer alternate-buffer)
+           (,(intern (concat "windmove-" to-string))))))))
+
+(drag-buffer left right)
+(drag-buffer right left)
+(drag-buffer up down)
+(drag-buffer down up)
 
 ;;; insert ticket in commits from branch name
-
 (defgroup insert-ticket ()
   "Customization related to automatically inserting the ticket number into the commit message.")
 

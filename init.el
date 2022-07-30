@@ -52,7 +52,12 @@
          ("C-c C-f" . insert-file-name)
          ("H-c f" . insert-buffer-name)
          ("s-<" . (lambda () (interactive) (scroll-right 8)))
-         ("s->" . (lambda () (interactive) (scroll-left 8)))))
+         ("s->" . (lambda () (interactive) (scroll-left 8)))
+         ;; drag buffer
+         ("M-s-<left>" . drag-buffer-left)
+         ("M-s-<right>" . drag-buffer-right)
+         ("M-s-<up>" . drag-buffer-up)
+         ("M-s-<down>" . drag-buffer-down)))
 (use-package quick-theme
   :load-path "~/.emacs.d/charles/"
   :config (progn ;themes
