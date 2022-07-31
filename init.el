@@ -9,25 +9,32 @@
  '(auto-save-visited-mode t)
  '(backup-directory-alist `(("." . "~/.emacs.d/saves")))
  '(column-number-mode t)
+ '(comint-process-echoes t)
  '(corfu-auto t)
+ '(corfu-auto-delay 0.0)
  '(corfu-auto-prefix 0)
+ '(corfu-on-exact-match 'quit)
  '(custom-safe-themes
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
+ '(default-text-scale-mode t nil (default-text-scale))
  '(delete-selection-mode t)
  '(dired-sidebar-width 50)
  '(dired-use-ls-dired nil)
  '(electric-pair-mode t)
  '(frame-title-format "Emacs" t)
+ '(global-corfu-mode t)
  '(hs-allow-nesting t t)
  '(hs-hide-comments-when-hiding-all t)
  '(hs-isearch-open t)
+ '(icomplete-mode t)
+ '(icomplete-vertical-mode t)
  '(indent-tabs-mode nil)
  '(initial-scratch-message "")
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
- '(show-paren-mode t)
+   '(yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+ '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
  '(use-package-always-demand t)
@@ -40,6 +47,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :extend nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "nil" :family "PlemolJP"))))
  '(completions-common-part ((t (:inherit minibuffer-prompt)))))
 (use-package diminish)
 (use-package charles
@@ -161,7 +169,8 @@
 (use-package autorevert
   :diminish ""
   :config (global-auto-revert-mode))
-(use-package haskell-mode)
+(use-package haskell-mode
+  :hook ((haskell-mode . interactive-haskell-mode)))
 (use-package dired-sidebar
   :bind (("C-c d" . dired-sidebar-toggle-sidebar)))
 (use-package drag-stuff
@@ -175,6 +184,10 @@
   :diminish "co"
   :bind (("M-/" . completion-at-point))
   :config (global-corfu-mode))
+(use-package marginalia
+  :config (marginalia-mode))
+(use-package default-text-scale)
+(use-package yaml-mode)
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))

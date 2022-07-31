@@ -79,7 +79,7 @@
 (defgroup insert-ticket ()
   "Customization related to automatically inserting the ticket number into the commit message.")
 
-(defcustom insert-ticket-commit-processor 'surround-brackets
+(defcustom insert-ticket-commit-processor 'append-hyphen
   "The function to be used on the ticket string before inserting into the commit message."
   :type 'symbol
   :group 'insert-ticket)
@@ -95,29 +95,36 @@
 (defun surround-brackets (string)
   (concat "[" string "] "))
 
+(defun ticketp (string)
+  (let* ((parts (split-string string "-" :omit-nulls))
+         (number (cadr parts)))
+    (/= 0 (string-to-number (or number "")))))
+
+(defun current-branch ()
+  (remove ?\n (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
+
 (defun current-ticket ()
-  (let* ((branch-name (remove ?\n (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
-         (first-hyphen (or (seq-position branch-name ?-) 0))
-         (after-first-hyphen (substring branch-name (+ first-hyphen 1)))
-         (second-hyphen (or (seq-position after-first-hyphen ?/)
-                            (seq-position after-first-hyphen ?-)))
-         (second-hyphen (if second-hyphen
-                            (+ first-hyphen second-hyphen 1)
-                          (length branch-name)))
-         (ticket-name (substring branch-name 0 second-hyphen))
-         (ticket-number (substring ticket-name (+ first-hyphen 1) second-hyphen)))
-    (if (or (/= 0 (string-to-number ticket-number))
-            (string= ticket-number "0"))
-        ticket-name
+  (let* ((parts-with-ticket
+          (split-string (cl-find-if #'ticketp
+                                    (split-string (current-branch) "/"
+                                                  :omit-nulls))
+                        "-" :omit-nulls))
+         (ticket-number (cadr parts-with-ticket))
+         (ticket-name (concat (car parts-with-ticket)
+                              "-"
+                              ticket-number)))
+    (if (and ticket-number
+             (/= 0 (string-to-number ticket-number)))
+        (upcase ticket-name)
       insert-ticket-default-ticket)))
 
 (defun insert-ticket ()
+  "Insert the current ticket at point."
   (interactive)
   (when (= (point) (point-min))
     (let* ((ticket-name (current-ticket)))
-      (unless (string= "" insert-ticket-default-ticket)
-        (insert (funcall ticket-insert-commit-processor
-                         insert-ticket-default-ticket))))))
+      (unless (string= "" ticket-name)
+        (insert (funcall insert-ticket-commit-processor ticket-name))))))
 
 (provide 'charles)
 ;;; charles.el ends here
