@@ -33,7 +33,7 @@
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+   '(restclient restclient-mode markdown-mode markup-mode dockerfile-mode docker-file-mode dockerfile yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
@@ -188,6 +188,12 @@
   :config (marginalia-mode))
 (use-package default-text-scale)
 (use-package yaml-mode)
+(use-package dockerfile-mode)
+(use-package markdown-mode)
+(use-package restclient)
+(use-package icomplete
+  :bind ((:map icomplete-minibuffer-map
+               ("RET" . icomplete-force-complete-and-exit))))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))

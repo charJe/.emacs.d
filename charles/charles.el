@@ -57,23 +57,23 @@
   (compilation-mode))
 
 ;;; drag buffer
-(defmacro drag-buffer (to from)
-  (let ((to-string (symbol-name to))
-        (from-string (symbol-name from)))
+(defmacro drag-buffer (to)
+  (let ((to-string (symbol-name to)))
     `(defun ,(intern (concat "drag-buffer-" to-string)) ()
        (interactive)
-       (let ((current-buffer (current-buffer)))
+       (let ((current-buffer (current-buffer))
+             (current-window (selected-window)))
          (,(intern (concat "windmove-" to-string)))
          (let ((alternate-buffer (current-buffer)))
            (switch-to-buffer current-buffer)
-           (,(intern (concat "windmove-" from-string)))
+           (select-window current-window)
            (switch-to-buffer alternate-buffer)
            (,(intern (concat "windmove-" to-string))))))))
 
-(drag-buffer left right)
-(drag-buffer right left)
-(drag-buffer up down)
-(drag-buffer down up)
+(drag-buffer left)
+(drag-buffer right)
+(drag-buffer up)
+(drag-buffer down)
 
 ;;; insert ticket in commits from branch name
 (defgroup insert-ticket ()
