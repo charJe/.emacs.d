@@ -33,7 +33,7 @@
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(restclient restclient-mode markdown-mode markup-mode dockerfile-mode docker-file-mode dockerfile yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+   '(restclient markdown-mode dockerfile-mode yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
