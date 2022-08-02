@@ -1,6 +1,8 @@
 ;;; package charles.el
 ;;; Charles Jackson
 
+(require 'dash)
+
 (defun round-money (n)
   "Truncate a N to two decimal places"
   (/ (ceiling (* 100 n)) 100.0))
@@ -125,6 +127,19 @@
     (let* ((ticket-name (current-ticket)))
       (unless (string= "" ticket-name)
         (insert (funcall insert-ticket-commit-processor ticket-name))))))
+
+;;; sql utility
+(defun pg-connect (connection &optional buf-name)
+  (interactive
+   (if sql-connection-alist
+       (list (sql-read-connection "Connection: ")
+             current-prefix-arg)
+     (user-error "No SQL Connections defined")))
+  (->> sql-connection-alist
+       (assoc connection) cdr
+       (assoc 'sql-password) cadr
+       (setenv "PGPASSWORD"))
+  (sql-connect connection buf-name))
 
 (provide 'charles)
 ;;; charles.el ends here
