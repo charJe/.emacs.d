@@ -2,7 +2,7 @@
 ;;; Charles Jackson
 
 (defconst haskell-operators
-  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "[" "]" "&" "|" "," "$"))))
+  (eval-when-compile (regexp-opt '("<" ">" "-" "+" "/" "*" "[" "]" "&" "|" "," "$" " . "))))
 
 (defface font-lock-extra-face
   '((t :inherit 'font-lock-function-name-face))

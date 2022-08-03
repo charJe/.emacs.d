@@ -199,11 +199,13 @@
 (use-package restclient)
 (use-package icomplete
   :bind ((:map icomplete-minibuffer-map
-               ("RET" . icomplete-force-complete-and-exit))))
+               ("RET" . icomplete-force-complete-and-exit)
+               ("M-/" . icomplete-force-complete))))
+(use-package display-line-numbers
+  :bind (("C-x x d" . display-line-numbers-mode)))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))
     (put fun 'disabled nil))
   (setq-default line-spacing .2)
   (switch-to-buffer "*scratch*"))
-
