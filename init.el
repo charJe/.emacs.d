@@ -30,6 +30,7 @@
  '(icomplete-vertical-mode t)
  '(indent-tabs-mode nil)
  '(initial-scratch-message "")
+ '(insert-ticket-commit-processor 'surround-brackets)
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages

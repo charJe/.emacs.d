@@ -106,19 +106,19 @@
   (remove ?\n (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
 
 (defun current-ticket ()
-  (let* ((parts-with-ticket
-          (split-string (cl-find-if #'ticketp
-                                    (split-string (current-branch) "/"
-                                                  :omit-nulls))
-                        "-" :omit-nulls))
-         (ticket-number (cadr parts-with-ticket))
-         (ticket-name (concat (car parts-with-ticket)
-                              "-"
-                              ticket-number)))
-    (if (and ticket-number
-             (/= 0 (string-to-number ticket-number)))
-        (upcase ticket-name)
-      insert-ticket-default-ticket)))
+  (let ((part-with-ticket
+         (cl-find-if #'ticketp
+                     (split-string (current-branch) "/"
+                                   :omit-nulls))))
+    (upcase
+     (if (null part-with-ticket)
+         insert-ticket-default-ticket
+       (let* ((ticket-parts (split-string
+                             "-" :omit-nulls))
+              (ticket-number (cadr ticket-parts)))
+         (concat (car ticket-parts)
+                 "-"
+                 ticket-number))))))
 
 (defun insert-ticket ()
   "Insert the current ticket at point."
