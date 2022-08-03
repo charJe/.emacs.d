@@ -42,8 +42,7 @@
  '(use-package-always-ensure t)
  '(vc-annotate-background nil)
  '(vc-annotate-very-old-color nil)
- '(wdired-allow-to-change-permissions t)
- )
+ '(wdired-allow-to-change-permissions t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
