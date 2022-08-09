@@ -12,10 +12,11 @@
  '(comint-process-echoes t)
  '(corfu-auto t)
  '(corfu-auto-delay 0.0)
- '(corfu-auto-prefix 0)
+ '(corfu-auto-prefix 2)
  '(corfu-on-exact-match 'quit)
  '(custom-safe-themes
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
+ '(dabbrev-case-fold-search t)
  '(default-text-scale-mode t nil (default-text-scale))
  '(delete-selection-mode t)
  '(dired-sidebar-width 50)
@@ -48,7 +49,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :extend nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "nil" :family "PlemolJP"))))
+ '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :extend nil :overline nil :underline nil :slant normal :weight normal :height 190 :width normal :foundry "nil" :family "PlemolJP"))))
  '(completions-common-part ((t (:inherit minibuffer-prompt)))))
 (use-package diminish)
 (use-package charles
@@ -60,8 +61,6 @@
          ("H--" . (lambda (arg) (interactive "p") (increment-number-at-point (- arg))))
          ("C-c C-f" . insert-file-name)
          ("H-c f" . insert-buffer-name)
-         ("s-<" . (lambda () (interactive) (scroll-right 8)))
-         ("s->" . (lambda () (interactive) (scroll-left 8)))
          ;; drag buffer
          ("M-s-<left>" . drag-buffer-left)
          ("M-s-<right>" . drag-buffer-right)
@@ -117,7 +116,11 @@
 (use-package compile
   :hook ((compilation-start . end-of-buffer))
   :bind (("ESC <f5>" . compile)
-         ("<f5>"     . recompile)))
+         ("<f5>"     . recompile))
+  :config
+  ;; Add color formatting to *compilation* buffer
+  (add-hook 'compilation-filter-hook
+            (lambda () (ansi-color-apply-on-region (point-min) (point-max)))))
 (use-package apropos
   :ensure nil
   :bind (("<help> a" . apropos)))
@@ -131,9 +134,6 @@
             (bind-key* "C-M-h" #'backward-kill-word)
             (define-key key-translation-map (kbd "C-?") (kbd "<help>"))
             (define-key key-translation-map (kbd "C-h") (kbd "DEL"))))
-(use-package subword
-  :after (haskell-mode)
-  :hook ((haskell-mode . subword-mode)))
 (use-package yasnippet
   :hook ((prog-mode . yas-minor-mode)
          (org-mode . yas-minor-mode)
@@ -171,7 +171,11 @@
   :diminish ""
   :config (global-auto-revert-mode))
 (use-package haskell-mode
-  :hook ((haskell-mode . interactive-haskell-mode)))
+  :hook ((haskell-mode . subword-mode)
+         (haskell-mode . interactive-haskell-mode))
+  :bind (:map haskell-mode-map
+              ("M-p" . haskell-goto-prev-error)
+              ("M-n" . haskell-goto-next-error)))
 (use-package dired-sidebar
   :bind (("C-c d" . dired-sidebar-toggle-sidebar)))
 (use-package drag-stuff
@@ -182,9 +186,7 @@
          ("<M-down>" . drag-stuff-down))
   :config (drag-stuff-global-mode t))
 (use-package corfu
-  :diminish "co"
-  :bind (("M-/" . completion-at-point))
-  :config (global-corfu-mode))
+  :bind (("M-/" . completion-at-point)))
 (use-package exec-path-from-shell
   :config (progn
             (exec-path-from-shell-initialize)
@@ -198,11 +200,25 @@
 (use-package markdown-mode)
 (use-package restclient)
 (use-package icomplete
+  :hook ((icomplete-minibuffer-setup . toggle-truncate-lines))
   :bind ((:map icomplete-minibuffer-map
                ("RET" . icomplete-force-complete-and-exit)
                ("M-/" . icomplete-force-complete))))
 (use-package display-line-numbers
   :bind (("C-x x d" . display-line-numbers-mode)))
+(use-package sql
+  :hook ((sql-interactive-mode . (lambda () (toggle-truncate-lines 1)))
+         (sql-mode . (lambda ()
+                       (setq-local completion-at-point-functions
+                                   (cons (lambda ()
+                                           (dabbrev-completion 16))
+                                         completion-at-point-functions))))))
+(use-package scroll-bar
+  :ensure nil
+  :bind (("C-x x s" . scroll-bar-mode)
+         ("C-x x h" . horizontal-scroll-bar-mode)
+         ("s-<" . (lambda () (interactive) (scroll-right 8)))
+         ("s->" . (lambda () (interactive) (scroll-left 8)))))
 (progn ;init
   (find-file "~/.emacs.d/init.el")
   (dolist (fun '(upcase-region downcase-region scroll-left scroll-right))
