@@ -12,7 +12,7 @@
  '(comint-process-echoes t)
  '(corfu-auto t)
  '(corfu-auto-delay 0.0)
- '(corfu-auto-prefix 2)
+ '(corfu-auto-prefix 0)
  '(corfu-on-exact-match 'quit)
  '(custom-safe-themes
    '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default))
@@ -35,7 +35,7 @@
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(restclient markdown-mode dockerfile-mode yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+   '(cape restclient markdown-mode dockerfile-mode yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
@@ -206,12 +206,12 @@
                ("M-/" . icomplete-force-complete))))
 (use-package display-line-numbers
   :bind (("C-x x d" . display-line-numbers-mode)))
+(use-package cape)
 (use-package sql
   :hook ((sql-interactive-mode . (lambda () (toggle-truncate-lines 1)))
          (sql-mode . (lambda ()
                        (setq-local completion-at-point-functions
-                                   (cons (lambda ()
-                                           (dabbrev-completion 16))
+                                   (cons #'cape-dabbrev
                                          completion-at-point-functions))))))
 (use-package scroll-bar
   :ensure nil
