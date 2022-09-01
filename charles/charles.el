@@ -113,8 +113,8 @@
     (upcase
      (if (null part-with-ticket)
          insert-ticket-default-ticket
-       (let* ((ticket-parts (split-string
-                             "-" :omit-nulls))
+       (let* ((ticket-parts (split-string part-with-ticket
+                                          "-" :omit-nulls))
               (ticket-number (cadr ticket-parts)))
          (concat (car ticket-parts)
                  "-"
@@ -123,7 +123,8 @@
 (defun insert-ticket ()
   "Insert the current ticket at point."
   (interactive)
-  (when (= (point) (point-min))
+  (when (and (= (point) (point-min))
+             (looking-at (rx line-end)))
     (let* ((ticket-name (current-ticket)))
       (unless (string= "" ticket-name)
         (insert (funcall insert-ticket-commit-processor ticket-name))))))
