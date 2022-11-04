@@ -8,6 +8,8 @@
  '(auto-save-file-name-transforms nil)
  '(auto-save-visited-mode t)
  '(backup-directory-alist `(("." . "~/.emacs.d/saves")))
+ '(cape-dabbrev-check-other-buffers 'some)
+ '(cape-dabbrev-min-length 2)
  '(column-number-mode t)
  '(comint-process-echoes t)
  '(corfu-auto t)
@@ -35,7 +37,8 @@
  '(insert-ticket-default-ticket "N/A")
  '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(cape restclient markdown-mode dockerfile-mode yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode yasnippet windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+   '(eglot cape restclient markdown-mode dockerfile-mode yaml-mode default-text-scale marginalia exec-path-from-shell diminish corfu drag-stuff dired-sidebar haskell-mode windresize use-package multiple-cursors magit expand-region color-theme-sanityinc-solarized))
+ '(sql-oracle-program "sqlcl")
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
@@ -208,11 +211,37 @@
   :bind (("C-x x d" . display-line-numbers-mode)))
 (use-package cape)
 (use-package sql
-  :hook ((sql-interactive-mode . (lambda () (toggle-truncate-lines 1)))
-         (sql-mode . (lambda ()
-                       (setq-local completion-at-point-functions
-                                   (cons #'cape-dabbrev
-                                         completion-at-point-functions))))))
+  :hook ((sql-interactive-mode
+          . (lambda ()
+              (toggle-truncate-lines 1)
+              (add-hook 'comint-preoutput-filter-functions 'sql-clean-for-output)))
+         (sql-mode
+          . (lambda ()
+              (setq-local
+               completion-at-point-functions
+               (cons #'cape-dabbrev
+                     completion-at-point-functions)
+               dabbrev-select-buffers-function
+               (lambda ()
+                 (cl-remove-if-not
+                  (lambda (buffer-name)
+                    (or (string-search "*List \"" buffer-name)
+                        (string-search "*SQL: <" buffer-name)
+                        (string-search ".sql" buffer-name)))
+                  (buffer-list)
+                  :key #'buffer-name))))))
+  :config
+  (progn
+    (defun sql-clean-for-output (string)
+      (end-of-buffer)
+      (forward-line -1)
+      (beginning-of-line)
+      (forward-line)
+      (set-mark (point))
+      (end-of-line)
+      (delete-active-region)
+      (deactivate-mark)
+      string)))
 (use-package scroll-bar
   :ensure nil
   :bind (("C-x x s" . scroll-bar-mode)
